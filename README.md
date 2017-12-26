@@ -26,6 +26,8 @@
 
 ## 3、使用DataApi
 
+DataApi的使用文档参照[该页面](https://github.com/quantOS-org/DataCore/blob/master/doc/api_ref.md)
+
 ```python
 from DataApi import DataApi  # 这里假设项目目录名为DataApi, 且存放在工作目录下
 
