@@ -238,6 +238,68 @@ class DataApi(object):
                               begin_time=_to_int(begin_time),
                               end_time=_to_int(end_time),
                               **kwargs)
+
+
+    def tick(self, symbol, start_time=200000, end_time=160000,
+            trade_date=0, fields="", data_format="", **kwargs):
+        
+        """
+        Query ticks, return DataFrame.
+
+        Parameters
+        ----------
+        symbol : str
+            support multiple securities, separated by comma.
+        start_time : int (HHMMSS) or str ('HH:MM:SS')
+            Default is market open time.
+        end_time : int (HHMMSS) or str ('HH:MM:SS')
+            Default is market close time.
+        trade_date : int (YYYMMDD) or str ('YYYY-MM-DD')
+            Default is 0.
+        fields : str, optional
+            separated by comma ',', default "" (all fields included).
+       
+        Returns
+        -------
+        df : pd.DataFrame
+            columns:
+                symbol, code, date, time, trade_date, last, open, high, low, close, volume, turnover, 
+                vwap, oi, settle, iopv, limit_up, limit_low, preclose, presettle, preoi,
+                askprice1, askprice2, askprice3, askprice4, askprice5,
+                bidprice1, bidprice2, bidprice3, bidprice4, bidprice5,
+                askvolume1, askvolume2, askvolume3, askvolume4, askvolume5,
+                bidvolume1, bidvolume2, bidvolume3, bidvolume4, bidvolume5
+        msg : str
+            error code and error message joined by comma
+
+        Examples
+        --------
+        df, msg = api.bar("000001.SH,cu1709.SHF", start_time="09:56:00", end_time="13:56:00",
+                          trade_date="20170823", fields="open,high,low,last,volume", freq="5m")
+
+        """
+        
+        begin_time = utils.to_time_int(start_time)
+        if (begin_time == -1):
+            return (-1, "Begin time format error")
+        end_time = utils.to_time_int(end_time)
+        if (end_time == -1):
+            return (-1, "End time format error")
+        trade_date = utils.to_date_int(trade_date)
+        if (trade_date == -1):
+            return (-1, "Trade date format error")
+        
+        return self._call_rpc("jst.query",
+                              self._get_format(data_format, "pandas"),
+                              "Tick",
+                              symbol=_str2bytes(symbol),
+                              fields=fields,                             
+                              trade_date=_to_int(trade_date),
+                              begin_time=_to_int(begin_time),
+                              end_time=_to_int(end_time),
+                              **kwargs)
+
+
     
     def bar_quote(self, symbol, start_time=200000, end_time=160000,
                   trade_date=0, freq="1M", fields="", data_format="", **kwargs):
